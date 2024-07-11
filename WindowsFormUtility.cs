@@ -9,7 +9,7 @@ namespace CPUWindowsFormFramework
 {
     public class WindowsFormUtility
     {
-        public static void SetListBinding(ComboBox lst, DataTable sourceDT, DataTable targetDT string tablename)
+        public static void SetListBinding(ComboBox lst, DataTable sourceDT, DataTable targetDT, string tablename)
         {
             lst.DataSource = sourceDT;
             lst.ValueMember = tablename + "ID";
