@@ -15,9 +15,12 @@ namespace CPUWindowsFormFramework
             lst.DataSource = sourceDT;
             lst.ValueMember = tablename + "ID";
             lst.DisplayMember = lst.Name.Substring(3);
-            if (targetDT != null) { 
-            lst.DataBindings.Add("selectedValue", targetDT, lst.ValueMember, false, DataSourceUpdateMode.OnPropertyChanged);
-        }
+            lst.DataBindings.Clear();
+
+            if (targetDT != null)
+            {
+                lst.DataBindings.Add("selectedValue", targetDT, lst.ValueMember, false, DataSourceUpdateMode.OnPropertyChanged);
+            }
         }
 
         public static void SetControlBinding(Control ctrl, BindingSource bindsource)
