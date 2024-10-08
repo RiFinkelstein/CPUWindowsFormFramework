@@ -10,12 +10,14 @@ namespace CPUWindowsFormFramework
 {
     public class WindowsFormUtility
     {
-        public static void SetListBinding(ComboBox lst, DataTable sourceDT, DataTable targetDT, string tablename)
+        public static void SetListBinding(ComboBox lst, DataTable sourceDT, DataTable? targetDT, string tablename)
         {
             lst.DataSource = sourceDT;
             lst.ValueMember = tablename + "ID";
             lst.DisplayMember = lst.Name.Substring(3);
+            if (targetDT != null) { 
             lst.DataBindings.Add("selectedValue", targetDT, lst.ValueMember, false, DataSourceUpdateMode.OnPropertyChanged);
+        }
         }
 
         public static void SetControlBinding(Control ctrl, BindingSource bindsource)
@@ -41,12 +43,77 @@ namespace CPUWindowsFormFramework
             }
         }
 
-        public static void FormatGridLforSearchResults(DataGridView grid)
+        public static void FormatGridLforSearchResults(DataGridView grid, string tablename)
         {
             grid.AllowUserToAddRows = false;
             grid.ReadOnly = true;
+            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            DoFormatGrid(grid, tablename);
+
+        }
+
+        public static void FormatGridforEdit(DataGridView grid, string tablename)
+        {
+            grid.EditMode= DataGridViewEditMode.EditOnEnter;
+            DoFormatGrid(grid, tablename);
+        }
+        private static void DoFormatGrid(DataGridView grid, string tablename)
+        {
             grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-           grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            grid.RowHeadersWidth = 25;
+            foreach(DataGridViewColumn col in grid.Columns)
+            {
+                if (col.Name.EndsWith("ID"))
+                {
+                    col.Visible = false;
+                }
+            }
+            string pkname= tablename+"ID";
+            if (grid.Columns.Contains(pkname))
+            {
+                grid.Columns[pkname].Visible = false;
+            }
+
+        }
+
+        public static int GetIDFromGrid(DataGridView grid, int rowindex, string columnname)
+        {
+            int id = 0;
+            if (rowindex < grid.Rows.Count && grid.Columns.Contains(columnname) && grid.Rows[rowindex].Cells[columnname].Value != DBNull.Value)
+            {
+                if (grid.Rows[rowindex].Cells[columnname].Value is int)
+                {
+                    id = (int)grid.Rows[rowindex].Cells[columnname].Value;
+                }
+            }
+            return id;
+        }
+
+        public static int GetIDFromComboBox(ComboBox lst)
+        {
+            int value = 0;
+            if(lst.SelectedValue != null && lst.SelectedValue is int)
+            {
+                value = (int)lst.SelectedValue;
+            }
+
+            return value;
+        }
+        public static void AddComboBoxToGrid(DataGridView grid, DataTable datasource, string tablename, string displaymember)
+        {
+            DataGridViewComboBoxColumn c = new();
+            c.DataSource = datasource;
+            c.DisplayMember = displaymember;
+            c.ValueMember = tablename + "ID";
+            c.DataPropertyName = c.ValueMember;
+            c.HeaderText = tablename;
+            grid.Columns.Insert(0, c);
+        }
+
+        public static void AddDeleteButtonToGrid(DataGridView grid, string deletecolname)
+        {
+            grid.Columns.Add(new DataGridViewButtonColumn() { Text = "X", HeaderText = "Delete", Name = deletecolname, UseColumnTextForButtonValue = true });
+
         }
 
         public static bool IsFormOpen(Type formtype, int pkvalue= 0)
