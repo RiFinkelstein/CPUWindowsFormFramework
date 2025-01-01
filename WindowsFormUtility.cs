@@ -23,6 +23,36 @@ namespace CPUWindowsFormFramework
             }
         }
 
+        public static void SetCheckBoxBinding(CheckBox checkBox, BindingSource bindSource, string columnName)
+        {
+            // Clear any existing bindings
+            checkBox.DataBindings.Clear();
+
+            // Ensure the BindingSource and DataTable are valid
+            if (bindSource != null && bindSource.DataSource is DataTable)
+            {
+                DataTable dt = (DataTable)bindSource.DataSource;
+
+                // Ensure the column exists and is of type BIT (or INT)
+                if (dt.Columns.Contains(columnName) && dt.Columns[columnName].DataType == typeof(int))
+                {
+                    Binding binding = new Binding("Checked", bindSource, columnName, true, DataSourceUpdateMode.OnPropertyChanged);
+
+                    // Use Format event to convert 0/1 to false/true for the CheckBox
+                    binding.Format += (sender, e) =>
+                    {
+                        e.Value = Convert.ToBoolean(e.Value); // Convert 0 to false, 1 to true
+                    };
+
+                    // Add the binding to the CheckBox
+                    checkBox.DataBindings.Add(binding);
+                }
+            }
+        }
+
+
+
+
         public static void SetControlBinding(Control ctrl, BindingSource bindsource)
         {
             string propertyname = "";
@@ -38,15 +68,41 @@ namespace CPUWindowsFormFramework
                 case "dtp":
                     propertyname = "value";
                     break;
-            }
-            if (propertyname != " " && columnname != " ")
-            {
-                ctrl.DataBindings.Add(propertyname, bindsource, columnname, true, DataSourceUpdateMode.OnPropertyChanged);
+                case "chb":
+                    propertyname = "checked";
+                    break;
 
+            }
+            if (!string.IsNullOrWhiteSpace(propertyname) && !string.IsNullOrWhiteSpace(columnname))
+            {
+                if (controltype == "chb" && ctrl is CheckBox)
+                {
+                    // Bind CheckBox.Checked to an int field (0 or 1)
+                    Binding binding = new Binding(propertyname, bindsource, columnname, true, DataSourceUpdateMode.OnPropertyChanged);
+                    binding.Format += (sender, e) =>
+                    {
+                        if (e.Value is int intValue)
+                        {
+                            e.Value = intValue == 1; // Convert int to bool
+                        }
+                    };
+                    binding.Parse += (sender, e) =>
+                    {
+                        if (e.Value is bool boolValue)
+                        {
+                            e.Value = boolValue ? 1 : 0; // Convert bool to int
+                        }
+                    };
+                    ctrl.DataBindings.Add(binding);
+                }
+                else
+                {
+                    ctrl.DataBindings.Add(propertyname, bindsource, columnname, true, DataSourceUpdateMode.OnPropertyChanged);
+                }
             }
         }
 
-        public static void FormatGridLforSearchResults(DataGridView grid, string tablename)
+            public static void FormatGridLforSearchResults(DataGridView grid, string tablename)
         {
             grid.AllowUserToAddRows = false;
             grid.ReadOnly = true;
