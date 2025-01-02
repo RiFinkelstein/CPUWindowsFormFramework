@@ -23,35 +23,6 @@ namespace CPUWindowsFormFramework
             }
         }
 
-        public static void SetCheckBoxBinding(CheckBox checkBox, BindingSource bindSource, string columnName)
-        {
-            // Clear any existing bindings
-            checkBox.DataBindings.Clear();
-
-            // Ensure the BindingSource and DataTable are valid
-            if (bindSource != null && bindSource.DataSource is DataTable)
-            {
-                DataTable dt = (DataTable)bindSource.DataSource;
-
-                // Ensure the column exists and is of type BIT (or INT)
-                if (dt.Columns.Contains(columnName) && dt.Columns[columnName].DataType == typeof(int))
-                {
-                    Binding binding = new Binding("Checked", bindSource, columnName, true, DataSourceUpdateMode.OnPropertyChanged);
-
-                    // Use Format event to convert 0/1 to false/true for the CheckBox
-                    binding.Format += (sender, e) =>
-                    {
-                        e.Value = Convert.ToBoolean(e.Value); // Convert 0 to false, 1 to true
-                    };
-
-                    // Add the binding to the CheckBox
-                    checkBox.DataBindings.Add(binding);
-                }
-            }
-        }
-
-
-
 
         public static void SetControlBinding(Control ctrl, BindingSource bindsource)
         {
