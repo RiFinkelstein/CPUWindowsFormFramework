@@ -131,7 +131,7 @@ namespace CPUWindowsFormFramework
         }
         public static void AddComboBoxToGrid(DataGridView grid, DataTable datasource, string tableName, string displayMember)
         {
-            string valueMember = tableName + "ID"; // IngredientID
+            string valueMember = tableName + "ID"; 
             string comboBoxColumnName = tableName + "ComboBox";
 
             // Remove any existing column with the same header as the combo box
