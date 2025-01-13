@@ -129,13 +129,14 @@ namespace CPUWindowsFormFramework
 
             return value;
         }
-        public static void AddComboBoxToGrid(DataGridView grid, DataTable datasource, string displayMember, string valuemember)
+        public static void AddComboBoxToGrid(DataGridView grid, DataTable datasource, string tablename, string displayMember)
         {
             DataGridViewComboBoxColumn c = new();
             c.DataSource = datasource;
             c.DisplayMember= displayMember;
-            c.ValueMember = valuemember;
+            c.ValueMember = tablename + "ID";
             c.DataPropertyName = c.ValueMember;
+            c.HeaderText = tablename;
             grid.Columns.Insert(0, c);
        
         }
