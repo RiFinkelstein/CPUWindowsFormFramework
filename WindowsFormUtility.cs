@@ -129,42 +129,15 @@ namespace CPUWindowsFormFramework
 
             return value;
         }
-        public static void AddComboBoxToGrid(DataGridView grid, DataTable datasource, string tableName, string displayMember)
+        public static void AddComboBoxToGrid(DataGridView grid, DataTable datasource, string displayMember, string valuemember)
         {
-            string valueMember = tableName + "ID"; 
-            string comboBoxColumnName = tableName + "ComboBox";
-
-            // Remove any existing column with the same header as the combo box
-            if (grid.Columns.Contains(displayMember))
-            {
-                grid.Columns.Remove(displayMember);
-            }
-
-            // Create a ComboBox column
-            DataGridViewComboBoxColumn comboBoxColumn = new()
-            {
-                DataSource = datasource,
-                DisplayMember = displayMember, // IngredientName for display
-                ValueMember = valueMember,     // IngredientID for storage
-                DataPropertyName = valueMember, // Bind to IngredientID in the grid's data source
-                HeaderText = displayMember,    // Display name in the header
-                Name = comboBoxColumnName      // Unique column name
-            };
-            
-            // Find and replace the IngredientID column in the grid
-            int columnIndex = grid.Columns[valueMember]?.Index ?? -1;
-            if (columnIndex >= 0)
-            {
-                grid.Columns.RemoveAt(columnIndex);
-                grid.Columns.Insert(columnIndex, comboBoxColumn);
-            }
-            else
-            {
-                grid.Columns.Add(comboBoxColumn);
-
-                // Add the combo box column at the end if no matching column found
-            }
-
+            DataGridViewComboBoxColumn c = new();
+            c.DataSource = datasource;
+            c.DisplayMember= displayMember;
+            c.ValueMember = valuemember;
+            c.DataPropertyName = c.ValueMember;
+            grid.Columns.Insert(0, c);
+       
         }
 
         public static void AddDeleteButtonToGrid(DataGridView grid, string deleteColName, int displayIndex = -1)
