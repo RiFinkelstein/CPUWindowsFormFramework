@@ -93,9 +93,9 @@ namespace CPUWindowsFormFramework
             grid.RowHeadersWidth = 25;
             foreach(DataGridViewColumn col in grid.Columns)
             {
-                if (col.Name.EndsWith("ID"))
+                if (col.Name.ToUpper().EndsWith("ID"))
                 {
-                    col.Visible = false;
+                  col.Visible = false;
                 }
             }
             string pkname= tablename+"ID";
@@ -134,10 +134,13 @@ namespace CPUWindowsFormFramework
             DataGridViewComboBoxColumn c = new();
             c.DataSource = datasource;
             c.DisplayMember= displayMember;
-            c.ValueMember = tablename + "ID";
+            c.ValueMember = tablename + "id";
             c.DataPropertyName = c.ValueMember;
             c.HeaderText = tablename;
+            c.ReadOnly = false;
+            grid.AllowDrop = true;
             grid.Columns.Insert(0, c);
+            grid.Columns[0].ReadOnly = false;
        
         }
 
