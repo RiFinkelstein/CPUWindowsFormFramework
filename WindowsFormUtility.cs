@@ -73,7 +73,7 @@ namespace CPUWindowsFormFramework
             }
         }
 
-            public static void FormatGridLforSearchResults(DataGridView grid, string tablename)
+        public static void FormatGridLforSearchResults(DataGridView grid, string tablename)
         {
             grid.AllowUserToAddRows = false;
             grid.ReadOnly = true;
@@ -84,21 +84,21 @@ namespace CPUWindowsFormFramework
 
         public static void FormatGridforEdit(DataGridView grid, string tablename)
         {
-            grid.EditMode= DataGridViewEditMode.EditOnEnter;
+            grid.EditMode = DataGridViewEditMode.EditOnEnter;
             DoFormatGrid(grid, tablename);
         }
         private static void DoFormatGrid(DataGridView grid, string tablename)
         {
             grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             grid.RowHeadersWidth = 25;
-            foreach(DataGridViewColumn col in grid.Columns)
+            foreach (DataGridViewColumn col in grid.Columns)
             {
                 if (col.Name.ToUpper().EndsWith("ID"))
                 {
-                  col.Visible = false;
+                    col.Visible = false;
                 }
             }
-            string pkname= tablename+"ID";
+            string pkname = tablename + "ID";
             if (grid.Columns.Contains(pkname))
             {
                 grid.Columns[pkname].Visible = false;
@@ -122,7 +122,7 @@ namespace CPUWindowsFormFramework
         public static int GetIDFromComboBox(ComboBox lst)
         {
             int value = 0;
-            if(lst.SelectedValue != null && lst.SelectedValue is int)
+            if (lst.SelectedValue != null && lst.SelectedValue is int)
             {
                 value = (int)lst.SelectedValue;
             }
@@ -133,7 +133,7 @@ namespace CPUWindowsFormFramework
         {
             DataGridViewComboBoxColumn c = new();
             c.DataSource = datasource;
-            c.DisplayMember= displayMember;
+            c.DisplayMember = displayMember;
             c.ValueMember = tablename + "id";
             c.DataPropertyName = c.ValueMember;
             c.HeaderText = tablename;
@@ -141,7 +141,7 @@ namespace CPUWindowsFormFramework
             grid.AllowDrop = true;
             grid.Columns.Insert(0, c);
             grid.Columns[0].ReadOnly = false;
-       
+
         }
 
         public static void AddDeleteButtonToGrid(DataGridView grid, string deleteColName, int displayIndex = -1)
@@ -169,7 +169,7 @@ namespace CPUWindowsFormFramework
         }
 
 
-        public static bool IsFormOpen(Type formtype, int pkvalue= 0)
+        public static bool IsFormOpen(Type formtype, int pkvalue = 0)
         {
             bool exists = false;
             foreach (Form frm in Application.OpenForms)
@@ -179,7 +179,7 @@ namespace CPUWindowsFormFramework
                 {
                     frmpkvalue = (int)frm.Tag;
                 }
-                if (frm.GetType() == formtype && frmpkvalue== pkvalue)
+                if (frm.GetType() == formtype && frmpkvalue == pkvalue)
                 {
                     frm.Activate();
                     exists = true;
@@ -205,6 +205,8 @@ namespace CPUWindowsFormFramework
             }
         }
 
+
+
         public static void Btn_Click(object? sender, EventArgs e)
         {
             if (sender != null && sender is ToolStripButton)
@@ -215,6 +217,20 @@ namespace CPUWindowsFormFramework
                     ((Form)btn.Tag).Activate();
                 }
             }
+        }
+
+        public static void EnforceNumericInput(TextBox textBox)
+        {
+            textBox.KeyPress += (sender, e) =>
+            {
+                if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+                {
+                    e.Handled = true; // Prevent the character from being entered
+
+                    // Show a friendly error message
+                    MessageBox.Show("Please enter only numeric values.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            };
         }
     }
 }
