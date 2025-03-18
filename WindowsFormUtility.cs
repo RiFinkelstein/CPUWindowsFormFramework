@@ -232,5 +232,32 @@ namespace CPUWindowsFormFramework
                 }
             };
         }
+
+        public static void EnforceNumericInputInGrid(DataGridView grid, params string[] numericColumnNames)
+        {
+            grid.EditingControlShowing -= (sender, e) => Grid_EditingControlShowing(sender, e, grid, numericColumnNames);
+            grid.EditingControlShowing += (sender, e) => Grid_EditingControlShowing(sender, e, grid, numericColumnNames);
+        }
+
+        private static void Grid_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e, DataGridView grid, string[] numericColumnNames)
+        {
+            if (grid.CurrentCell == null || !numericColumnNames.Contains(grid.Columns[grid.CurrentCell.ColumnIndex].Name))
+                return;
+
+            if (e.Control is TextBox tb)
+            {
+                tb.KeyPress -= NumericColumn_KeyPress; // Remove any existing handler
+                tb.KeyPress += NumericColumn_KeyPress; // Attach handler
+            }
+        }
+
+        private static void NumericColumn_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
     }
 }
